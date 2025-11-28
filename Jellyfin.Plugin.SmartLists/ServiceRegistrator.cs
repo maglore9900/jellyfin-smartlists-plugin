@@ -3,6 +3,7 @@ using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;
 using MediaBrowser.Common;
 using Jellyfin.Plugin.SmartLists.Services.Shared;
+using Jellyfin.Plugin.SmartLists.Services.Users;
 
 namespace Jellyfin.Plugin.SmartLists
 {
@@ -20,7 +21,30 @@ namespace Jellyfin.Plugin.SmartLists
         {
             // Register RefreshStatusService first
             serviceCollection.AddSingleton<RefreshStatusService>();
-            
+
+            // Register SmartListFileSystem (required by user playlist stores)
+            serviceCollection.AddSingleton<ISmartListFileSystem>(sp =>
+            {
+                var applicationPaths = sp.GetRequiredService<IServerApplicationPaths>();
+                var logger = sp.GetService<Microsoft.Extensions.Logging.ILogger<SmartListFileSystem>>();
+                return new SmartListFileSystem(applicationPaths, logger);
+            });
+
+            // Register User playlist services (stores and service)
+            serviceCollection.AddSingleton<UserPlaylistStore>(sp =>
+            {
+                var fileSystem = sp.GetRequiredService<ISmartListFileSystem>();
+                var logger = sp.GetService<Microsoft.Extensions.Logging.ILogger<UserPlaylistStore>>();
+                return new UserPlaylistStore(fileSystem, logger);
+            });
+            serviceCollection.AddSingleton<IgnoreStore>(sp =>
+            {
+                var fileSystem = sp.GetRequiredService<ISmartListFileSystem>();
+                var logger = sp.GetService<Microsoft.Extensions.Logging.ILogger<IgnoreStore>>();
+                return new IgnoreStore(fileSystem, logger);
+            });
+            serviceCollection.AddScoped<UserPlaylistService>();
+
             // Register RefreshQueueService as singleton
             serviceCollection.AddSingleton<RefreshQueueService>(sp =>
             {
@@ -54,6 +78,8 @@ namespace Jellyfin.Plugin.SmartLists
             });
             
             serviceCollection.AddHostedService<AutoRefreshHostedService>();
+            serviceCollection.AddHostedService<ClientScriptInjector>();
+            serviceCollection.AddHostedService<UserAutoRefreshService>();
             serviceCollection.AddScoped<IManualRefreshService, ManualRefreshService>();
         }
     }

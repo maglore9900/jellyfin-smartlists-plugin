@@ -90,6 +90,9 @@
 
         // Load configuration (this can run independently)
         SmartLists.loadConfiguration(page);
+
+        // Initialize user page URL in settings tab
+        SmartLists.initUserPageUrl(page);
     };
 
     // ===== STATIC SELECTS POPULATION =====
@@ -752,6 +755,12 @@
                 if (SmartLists.importPlaylists) {
                     SmartLists.importPlaylists(page);
                 }
+            }
+            if (target.closest('#copyUserUrlBtn')) {
+                SmartLists.copyUserPageUrl(page);
+            }
+            if (target.closest('#openUserPageBtn')) {
+                SmartLists.openUserPage();
             }
             if (target.closest('.delete-playlist-btn')) {
                 const button = target.closest('.delete-playlist-btn');

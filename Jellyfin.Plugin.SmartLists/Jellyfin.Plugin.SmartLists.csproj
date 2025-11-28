@@ -49,6 +49,18 @@
     <EmbeddedResource Include="Configuration\config-api.js" />
     <!-- Initialization (must load last) -->
     <EmbeddedResource Include="Configuration\config-init.js" />
+    <!-- User configuration page (separate from admin) -->
+    <EmbeddedResource Include="Configuration\user-config.html" />
+    <!-- User configuration JavaScript -->
+    <EmbeddedResource Include="Configuration\user-config.js" />
+    <!-- User wizard page -->
+    <EmbeddedResource Include="Configuration\user-wizard.html" />
+    <!-- User wizard JavaScript -->
+    <EmbeddedResource Include="Configuration\user-wizard.js" />
+    <!-- User settings page -->
+    <EmbeddedResource Include="Configuration\user-settings.html" />
+    <!-- User settings JavaScript -->
+    <EmbeddedResource Include="Configuration\user-settings.js" />
   </ItemGroup>
 
   <ItemGroup>

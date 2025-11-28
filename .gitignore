@@ -347,6 +347,24 @@ healthchecksdb
 # Local dev files (now in dev/ folder)
 dev/jellyfin-data*
 dev/media/
+dev/cache/
+dev/config/
+
+# Development scratchpad and notes
+claude-scratchpad.md
+claude.md
+first_round_history.md
+
+# Development planning docs (keep docs/content/ for actual documentation)
+docs/architecture.md
+docs/checkpoints.md
+docs/files-changed.md
+docs/implementation-phases.md
+docs/potential-issues.md
+docs/requirements.md
+docs/sidebar-navigation-research.md
+docs/standardization-plan.md
+docs/test-strategy.md
 
 # Mac
 .DS_Store

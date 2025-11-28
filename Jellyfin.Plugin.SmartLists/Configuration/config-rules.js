@@ -664,8 +664,8 @@
     };
 
     // ===== LOGIC GROUP MANAGEMENT =====
-    SmartLists.createInitialLogicGroup = function (page) {
-        const rulesContainer = page.querySelector('#rules-container');
+    SmartLists.createInitialLogicGroup = function (page, containerSelector) {
+        const rulesContainer = page.querySelector(containerSelector || '#rules-container');
         const logicGroupId = 'logic-group-' + Date.now();
 
         const logicGroupDiv = SmartLists.createStyledElement('div', 'logic-group', SmartLists.STYLES.logicGroup);
@@ -920,8 +920,8 @@
         SmartLists.updateRuleButtonVisibility(page);
     };
 
-    SmartLists.addNewLogicGroup = function (page) {
-        const rulesContainer = page.querySelector('#rules-container');
+    SmartLists.addNewLogicGroup = function (page, containerSelector) {
+        const rulesContainer = page.querySelector(containerSelector || '#rules-container');
 
         // Add OR separator between groups
         const orSeparator = SmartLists.createOrSeparator();
@@ -1010,8 +1010,22 @@
         SmartLists.updateAllSortOptionsVisibility(page);
     };
 
-    SmartLists.updateRuleButtonVisibility = function (page) {
-        const rulesContainer = page.querySelector('#rules-container');
+    SmartLists.updateRuleButtonVisibility = function (page, containerSelector) {
+        // Try the specified container, then fall back to known containers
+        var rulesContainer = null;
+        if (containerSelector) {
+            rulesContainer = page.querySelector(containerSelector);
+        }
+        if (!rulesContainer) {
+            rulesContainer = page.querySelector('#rules-container');
+        }
+        if (!rulesContainer) {
+            rulesContainer = page.querySelector('#wizard-rules-container');
+        }
+        if (!rulesContainer) {
+            console.warn('[SmartLists] updateRuleButtonVisibility: No rules container found');
+            return;
+        }
         const allLogicGroups = rulesContainer.querySelectorAll('.logic-group');
 
         allLogicGroups.forEach(function (group) {

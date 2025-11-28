@@ -338,6 +338,17 @@
     };
 
     /**
+     * Clear all selected items in a multi-select
+     * @param {HTMLElement} page - The page element
+     * @param {string} containerId - ID of the container element
+     * @param {string} checkboxClass - CSS class for checkboxes
+     * @param {string} placeholderText - Placeholder text when nothing is selected
+     */
+    SmartLists.clearAllItems = function (page, containerId, checkboxClass, placeholderText) {
+        SmartLists.setSelectedItems(page, containerId, [], checkboxClass, placeholderText);
+    };
+
+    /**
      * Update the display text showing selected items
      * @param {HTMLElement} page - The page element
      * @param {string} containerId - ID of the container element

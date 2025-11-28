@@ -24,6 +24,14 @@ namespace Jellyfin.Plugin.SmartLists.Services.Shared
         string GetSmartListPath(string fileName);
         string GetLegacyPath(string fileName);
         Task<(SmartPlaylistDto[] Playlists, SmartCollectionDto[] Collections)> GetAllSmartListsAsync();
+
+        // User-specific paths for user-created smart playlists
+        string GetUserBasePath(string userId);
+        string GetUserPlaylistsPath(string userId);
+        string GetUserIgnoresPath(string userId);
+        string GetUserPlaylistPath(string userId, string playlistId);
+        string[] GetAllUserPlaylistFilePaths(string userId);
+        string[] GetAllUserIds();
     }
 
     /// <summary>
@@ -241,6 +249,111 @@ namespace Jellyfin.Plugin.SmartLists.Services.Shared
             }
 
             return (playlists.ToArray(), collections.ToArray());
+        }
+
+        // ==================== User-specific path methods ====================
+
+        /// <summary>
+        /// Gets the base path for a user's smart list data.
+        /// Structure: {BasePath}/users/{userId}/
+        /// </summary>
+        public string GetUserBasePath(string userId)
+        {
+            ValidateUserId(userId);
+            var userPath = Path.Combine(BasePath, "users", userId);
+            if (!Directory.Exists(userPath))
+            {
+                Directory.CreateDirectory(userPath);
+            }
+            return userPath;
+        }
+
+        /// <summary>
+        /// Gets the path for a user's smart playlists directory.
+        /// Structure: {BasePath}/users/{userId}/playlists/
+        /// </summary>
+        public string GetUserPlaylistsPath(string userId)
+        {
+            var playlistsPath = Path.Combine(GetUserBasePath(userId), "playlists");
+            if (!Directory.Exists(playlistsPath))
+            {
+                Directory.CreateDirectory(playlistsPath);
+            }
+            return playlistsPath;
+        }
+
+        /// <summary>
+        /// Gets the path for a user's ignore list file.
+        /// Structure: {BasePath}/users/{userId}/ignores.json
+        /// </summary>
+        public string GetUserIgnoresPath(string userId)
+        {
+            // Ensure user directory exists
+            GetUserBasePath(userId);
+            return Path.Combine(BasePath, "users", userId, "ignores.json");
+        }
+
+        /// <summary>
+        /// Gets the path for a specific user smart playlist file.
+        /// Structure: {BasePath}/users/{userId}/playlists/{playlistId}.json
+        /// </summary>
+        public string GetUserPlaylistPath(string userId, string playlistId)
+        {
+            ValidateUserId(userId);
+            ValidatePlaylistId(playlistId);
+            return Path.Combine(GetUserPlaylistsPath(userId), $"{playlistId}.json");
+        }
+
+        /// <summary>
+        /// Gets all user smart playlist file paths for a specific user.
+        /// </summary>
+        public string[] GetAllUserPlaylistFilePaths(string userId)
+        {
+            ValidateUserId(userId);
+            var playlistsPath = Path.Combine(BasePath, "users", userId, "playlists");
+            if (!Directory.Exists(playlistsPath))
+            {
+                return [];
+            }
+            return Directory.GetFiles(playlistsPath, "*.json", SearchOption.TopDirectoryOnly);
+        }
+
+        /// <summary>
+        /// Gets all user IDs that have smart playlist data.
+        /// </summary>
+        public string[] GetAllUserIds()
+        {
+            var usersPath = Path.Combine(BasePath, "users");
+            if (!Directory.Exists(usersPath))
+            {
+                return [];
+            }
+            return Directory.GetDirectories(usersPath)
+                .Select(Path.GetFileName)
+                .Where(name => !string.IsNullOrEmpty(name) && Guid.TryParse(name, out _))
+                .ToArray()!;
+        }
+
+        /// <summary>
+        /// Validates that a user ID is a valid GUID to prevent path injection.
+        /// </summary>
+        private static void ValidateUserId(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out _))
+            {
+                throw new ArgumentException("User ID must be a valid GUID", nameof(userId));
+            }
+        }
+
+        /// <summary>
+        /// Validates that a playlist ID is a valid GUID to prevent path injection.
+        /// </summary>
+        private static void ValidatePlaylistId(string playlistId)
+        {
+            if (string.IsNullOrWhiteSpace(playlistId) || !Guid.TryParse(playlistId, out _))
+            {
+                throw new ArgumentException("Playlist ID must be a valid GUID", nameof(playlistId));
+            }
         }
     }
 }

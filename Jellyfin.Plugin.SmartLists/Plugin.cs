@@ -162,6 +162,42 @@ namespace Jellyfin.Plugin.SmartLists
                 {
                     Name = "config-init.js",
                     EmbeddedResourcePath = GetType().Namespace + ".Configuration.config-init.js",
+                },
+                // User configuration page (separate from admin)
+                new PluginPageInfo
+                {
+                    Name = "user-config.html",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.user-config.html",
+                },
+                // User configuration JavaScript
+                new PluginPageInfo
+                {
+                    Name = "user-config.js",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.user-config.js",
+                },
+                // User wizard page
+                new PluginPageInfo
+                {
+                    Name = "user-wizard.html",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.user-wizard.html",
+                },
+                // User wizard JavaScript
+                new PluginPageInfo
+                {
+                    Name = "user-wizard.js",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.user-wizard.js",
+                },
+                // User settings page
+                new PluginPageInfo
+                {
+                    Name = "user-settings.html",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.user-settings.html",
+                },
+                // User settings JavaScript
+                new PluginPageInfo
+                {
+                    Name = "user-settings.js",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.user-settings.js",
                 }
             ];
         }

@@ -152,6 +152,61 @@
             .replace(/`/g, '&#96;');
     };
 
+    /**
+     * Get the URL for the user smart playlists configuration page.
+     * @returns {string} The full URL to the user config page
+     */
+    SmartLists.getUserPageUrl = function () {
+        return window.location.origin + '/web/configurationpage?name=user-config.html';
+    };
+
+    /**
+     * Initialize the user page URL field in settings tab.
+     * @param {Element} page - The page element
+     */
+    SmartLists.initUserPageUrl = function (page) {
+        var urlInput = page.querySelector('#userPageUrl');
+        if (urlInput) {
+            urlInput.value = SmartLists.getUserPageUrl();
+        }
+    };
+
+    /**
+     * Copy the user page URL to clipboard.
+     * @param {Element} page - The page element
+     */
+    SmartLists.copyUserPageUrl = function (page) {
+        var url = SmartLists.getUserPageUrl();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () {
+                SmartLists.showNotification('URL copied to clipboard!', 'success');
+            }).catch(function () {
+                // Fallback: select the input
+                var urlInput = page.querySelector('#userPageUrl');
+                if (urlInput) {
+                    urlInput.select();
+                    document.execCommand('copy');
+                    SmartLists.showNotification('URL copied to clipboard!', 'success');
+                }
+            });
+        } else {
+            // Fallback for older browsers
+            var urlInput = page.querySelector('#userPageUrl');
+            if (urlInput) {
+                urlInput.select();
+                document.execCommand('copy');
+                SmartLists.showNotification('URL copied to clipboard!', 'success');
+            }
+        }
+    };
+
+    /**
+     * Open the user page in a new tab.
+     */
+    SmartLists.openUserPage = function () {
+        window.open(SmartLists.getUserPageUrl(), '_blank');
+    };
+
     // Extract error message from API error responses
     // Handles both modern Response objects and legacy error formats
     SmartLists.extractErrorMessage = async function (err, defaultMessage) {
